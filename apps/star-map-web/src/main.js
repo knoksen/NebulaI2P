@@ -1,8 +1,43 @@
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import { NebulaAudioEngine } from "./NebulaAudioEngine.js";
 
 const canvas = document.getElementById("nebula-canvas");
 const modal = document.getElementById("node-modal");
 const modalText = document.getElementById("node-modal-text");
+const audioBtn = document.getElementById("audio-toggle");
+const audioEngine = new NebulaAudioEngine();
+let isMuted = false;
+
+if (audioBtn) {
+  const btnIcon = audioBtn.querySelector(".btn-icon");
+  const btnText = audioBtn.querySelector(".btn-text");
+
+  audioBtn.addEventListener("click", () => {
+    if (!audioEngine.isUnlocked) {
+      audioEngine.unlock();
+
+      audioBtn.classList.add("audio-active");
+      if (btnIcon) btnIcon.textContent = "🔊";
+      if (btnText) btnText.textContent = "AUDIO: ONLINE";
+
+      audioEngine.playSonarPing();
+      return;
+    }
+
+    isMuted = !isMuted;
+    if (isMuted) {
+      audioEngine.masterGain.gain.linearRampToValueAtTime(0, audioEngine.ctx.currentTime + 0.1);
+      if (btnIcon) btnIcon.textContent = "🔇";
+      if (btnText) btnText.textContent = "AUDIO: MUTED";
+      audioBtn.classList.remove("audio-active");
+    } else {
+      audioEngine.masterGain.gain.linearRampToValueAtTime(0.4, audioEngine.ctx.currentTime + 0.1);
+      if (btnIcon) btnIcon.textContent = "🔊";
+      if (btnText) btnText.textContent = "AUDIO: ONLINE";
+      audioBtn.classList.add("audio-active");
+    }
+  });
+}
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#050510");
@@ -334,6 +369,12 @@ function triggerSonar(direction = "outgoing") {
   sonarStart = performance.now();
   sonarDirection = direction;
   sonarUniforms.uColor.value.set(direction === "outgoing" ? "#f6c65b" : "#c7d1dd");
+
+  if (direction === "outgoing") {
+    audioEngine.playSonarPing();
+  } else {
+    audioEngine.playIncomingBass();
+  }
 }
 
 setInterval(() => {
