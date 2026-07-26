@@ -1,4 +1,4 @@
-import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+import * as THREE from "three";
 import { NebulaAudioEngine } from "./NebulaAudioEngine.js";
 
 const canvas = document.getElementById("nebula-canvas");
@@ -142,6 +142,13 @@ window.triggerDockingSequence = () => {
 window.completeDockingSequence = () => {
   window.setBlackHoleMassTarget(0.0);
 };
+
+function triggerThreeJsExplosion(size = 24) {
+  const normalized = THREE.MathUtils.clamp(size / 100, 0.2, 1.2);
+  const boost = 0.25 + normalized * 0.75;
+  window.setBlackHoleMassTarget(THREE.MathUtils.clamp(0.55 + boost * 0.6, 0, 2));
+  triggerSonar("incoming");
+}
 
 const ambient = new THREE.AmbientLight(0x8d93ff, 0.42);
 scene.add(ambient);
@@ -472,3 +479,24 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderTarget.setSize(window.innerWidth, window.innerHeight);
 });
+
+async function attachTauriCollisionListener() {
+  const isTauriRuntime = typeof window !== "undefined" && !!window.__TAURI_INTERNALS__;
+  if (!isTauriRuntime) return;
+
+  try {
+    const eventApi = await import("@tauri-apps/api/event");
+    await eventApi.listen("incoming-collision", (event) => {
+      const payload = event?.payload || {};
+      const size = Number(payload.size ?? 24);
+      console.log("Datakollisjon oppdaget fra Rust:", payload);
+      audioEngine.playIncomingBass();
+      triggerThreeJsExplosion(size);
+    });
+    console.log("Tauri IPC listener aktiv: incoming-collision");
+  } catch (error) {
+    console.error("Kunne ikke registrere Tauri IPC listener:", error);
+  }
+}
+
+attachTauriCollisionListener();

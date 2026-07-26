@@ -11,9 +11,14 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Nebula Desktop Shell",
-        "width": 800,
-        "height": 600
+        "title": "Nebula Homebase",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 640,
+        "decorations": false,
+        "transparent": true,
+        "resizable": true
       }
     ],
     "security": {

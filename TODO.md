@@ -1,13 +1,17 @@
-# NebulaI2P - Tauri Desktop Setup TODO
+# Nebula Tauri + Three.js Integration TODO
 
-- [ ] 1. Initialisere Tauri v2 i `apps/desktop-shell`
-- [ ] 2. Konfigurere Tauri til å bruke `apps/star-map-web` som frontend (dev + build)
-- [ ] 3. Legge til minimal Tauri Rust command (sanity-check)
-- [ ] 4. Oppdatere `apps/desktop-shell/README.md` med kjøreinstruksjoner
-- [ ] 5. Verifisere oppsett med lokal kjøring (`tauri dev`)
+- [x] Add `apps/star-map-web/package.json` with Vite + Three scripts/deps
+- [x] Update `apps/star-map-web/src/main.js` for npm Three import and Tauri IPC listener
+- [x] Update `apps/desktop-shell-tauri/src-tauri/src/lib.rs` to emit `incoming-collision` events
+- [x] Update `apps/desktop-shell-tauri/src-tauri/tauri.conf.json` for borderless transparent sci-fi window
+- [x] Update `apps/desktop-shell-tauri/package.json` scripts for smoother dev workflow
+- [x] Update desktop shell README with setup/run guide
+- [x] Run install/dev commands to validate setup
 
-## Progress Steps
-- [ ] Update `apps/desktop-shell-tauri/src-tauri/tauri.conf.json` for Nebula frontend/dev setup
-- [ ] Update `apps/desktop-shell/README.md` with Tauri run instructions
-- [ ] Mark completed checklist items in this TODO
-- [ ] Run local verification command (`npm run tauri dev`)
+## Hologram Window Refactor (desktop-shell-tauri)
+
+- [x] Ensure `three` exists in `apps/desktop-shell-tauri/package.json`
+- [x] Replace `apps/desktop-shell-tauri/src/index.html` with HUD + `canvas#bg` + `data-tauri-drag-region`
+- [x] Replace `apps/desktop-shell-tauri/src/main.js` with transparent Three.js renderer (`alpha: true`)
+- [x] Update `apps/desktop-shell-tauri/src/styles.css` to enforce transparent page background
+- [x] Mark all items complete after implementation
